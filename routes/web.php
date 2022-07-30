@@ -18,7 +18,7 @@ $router->get('/', function () use ($router) {
 });
 
 // Users
-$router->group(['prefix' => 'users'], function() use ($router) {
+$router->group(['prefix' => 'users', 'middleware' => 'auth'], function() use ($router) {
     $router->get('/', 'UserController@index');
     $router->post('/', 'UserController@store');
     $router->get('/{id}', 'UserController@show');
@@ -71,13 +71,13 @@ $router->group(['prefix' => 'auth'], function() use ($router) {
 
 //general
 $router->group(['prefix' => 'general'], function() use ($router) {
-    $router->get('/ram', function() {
+    $router->get('/ram', ['middleware' => 'auth' , 'use' => function() {
         return json_encode([
             'data' => 'TEXT from RAM SERVER'
         ]);
-    });
+    }]);
 
-    $router->get('/password', function() {
+    $router->get('/password', ['middleware' => 'auth' , 'use' => function() {
         return json_encode([
            'pass1 from server',
            'pass2 from server',
@@ -85,5 +85,5 @@ $router->group(['prefix' => 'general'], function() use ($router) {
            'pass4 from server',
            'pass5 from server',
         ]);
-    });
+    }]);
 });

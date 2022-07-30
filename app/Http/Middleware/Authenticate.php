@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
 
@@ -35,10 +36,20 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
-        }
 
-        return $next($request);
+        if ($request->bearerToken()) {
+            $user = User::where('api_token', $request->bearerToken())->with(['userroles.roles', 'userroles.roles.rolectrl', 'userroles.roles.rolectrl.ctrls',])->first();
+            if ($user->is_admin == 1)
+                return $next($request);
+            if (isset($user->userroles[0]->roles->rolectrl))
+                foreach ($user->userroles[0]->roles->rolectrl as $val) {
+                    if (str_contains($request->path(), strtolower($val->ctrls->name))) {
+                        return $next($request);
+                    }
+                }
+            return response('Unauthorized.', 200);
+        } else {
+            return response('Unauthorized.', 200);
+        }
     }
 }

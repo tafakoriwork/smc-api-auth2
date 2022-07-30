@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,7 +23,12 @@ class UserController extends Controller
                     'api_token'=> base64_encode($password),
                 ]);
         $user->password = $password;
+        
         $user->save();
+        UserRole::create([
+            'user_id' => $user->id,
+            'role_id' => $request->role_id,
+        ]);
         return response()->json(['data' => "The user with with id {$user->id} has been created"], 201);
     }
     public function show($id){
@@ -33,13 +39,24 @@ class UserController extends Controller
         return response()->json(['data' => $user], 200);
     }
     public function update(Request $request, $id){
+        $userole = UserRole::where(['user_id' => $id])->first();
+
+        if($userole) {
+            UserRole::where([
+                'user_id' => $id])->update([
+                'role_id' => $request->role_id
+                ]);
+        }
+        else {
+            $userole = UserRole::create(['user_id' => $id, 'role_id' => $request->role_id])->first();
+        }
         $user = User::find($id);
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
-        $this->validateRequest($request);
         $user->username        = $request->get('username');
         $user->password     = Hash::make($request->get('password'));
+        
         $user->save();
         return response()->json(['data' => "The user with with id {$user->id} has been updated"], 200);
     }
