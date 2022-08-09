@@ -87,3 +87,13 @@ $router->group(['prefix' => 'general'], function() use ($router) {
         ]);
     }]);
 });
+
+//smc 
+$router->group(['prefix' => 'smc', 'namespace' => 'smc'], function() use ($router) {
+    $router->get('/cpu', 'CPUController@getState');
+    $router->get('/ram', 'RAMController@getState');
+    $router->get('/hdd', 'HDDController@getState');
+    $router->get('/nic', 'NICController@getState');
+    $router->get('/ceph', 'CEPHController@getState');
+    $router->get('/services', 'SERVICESController@getState');
+});

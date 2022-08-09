@@ -26,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
         });
         $pass = Hash::make('12345678');
+        
        DB::table('users')->insert([
         'firstname' => 'super',
         'lastname' => 'admin',

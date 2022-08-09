@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\smc;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -9,18 +9,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class UserRole extends Model implements AuthenticatableContract, AuthorizableContract
+class CPU extends Model
 {
-    use Authenticatable, Authorizable, HasFactory;
-    protected $table ='userroles';
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
+    protected $table = 'cpus';
     protected $fillable = [
-        'user_id',
-        'role_id',
+        'cpu_usage',
+        'cpu_current_speed',
+        'cpu_maximum_speed',
+        'cpu_cores',
+        'processors',
     ];
 
     /**
@@ -30,8 +33,4 @@ class UserRole extends Model implements AuthenticatableContract, AuthorizableCon
      */
     protected $hidden = [
     ];
-
-    public function roles() {
-        return $this->belongsTo(Role::class, 'role_id');
-    }
 }
